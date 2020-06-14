@@ -21,13 +21,15 @@ public class Victorine : MonoBehaviour
 
     public GameObject game;
 
-    private float time;
+    public float time;
+    private int _ratingScore;
 
     public Text timeCount;
     public Text trueAnswers;
     public Text countAnswers;
+    public Text ratingScore;
 
-    private AIMove speedBird1;
+    private AIMoveFirstBird speedBird1;
     
     private List<object> qList;
     private QuestionList crntQ;
@@ -39,22 +41,26 @@ public class Victorine : MonoBehaviour
     public int _trueAnswers;
     public int _countAnswers;
 
-    private void Awake()
+    private void Awake()//Бесполезно
     {
-        speedBird1 = Bird1.GetComponent<AIMove>();
+        speedBird1 = Bird1.GetComponent<AIMoveFirstBird>();
     }
 
     public void Update()
     {
-        if(!game.activeSelf)
-            return;
+        
+        //if(!game.activeSelf)
+        //    return;
         time += Time.deltaTime;
+        _ratingScore = Mathf.RoundToInt(time) * (_trueAnswers / _countAnswers);
+        //time = Math.Round(time, 2);
         if (Bird1.transform.position == endPosition.position && !lampochka)
         {
             lampochka = true;
-            timeCount.text = Convert.ToString(time).Remove(6) + "сек.";
+            timeCount.text = Convert.ToString(time).Remove(7);
             trueAnswers.text = Convert.ToString(_trueAnswers);
             countAnswers.text = Convert.ToString(_countAnswers);
+            ratingScore.text = Convert.ToString(_ratingScore);
             victorinePanel.SetActive(false);
             ratingPanel.SetActive(true);
         }
@@ -87,13 +93,16 @@ public class Victorine : MonoBehaviour
 
     public void AnswersButtons(int index)
     {
+        print(AnswersText[index].ToString());
         if (AnswersText[index].text.ToString() == crntQ.Answer[0])
         {
             _trueAnswers++;
-            speedBird1.SpeedMove += 0.1f;
+            //speedBird1.SpeedMove += 0.1f;     Заменил на использование статического класса.
+            Stats.MovementVelocityFirstBird += 0.1f;
         }
         else
         {
+           
         }
         _countAnswers++;
         StartCoroutine(KostylNomer2534());
